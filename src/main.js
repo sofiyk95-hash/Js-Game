@@ -10,9 +10,10 @@ class Game {
     this.lasers = [];
     this.score = 0;
     this.currentMultiplier = CONFIG.INITIAL_SPEED_MULTIPLIER;
+    this.currentIntervalMs = null;
+    this.nextSpeedUpScore = 2000;
     this.isGameActive = false;
     this.gameInterval = null;
-
     this.startBtn = document.getElementById('start-btn');
     if (this.startBtn) {
       this.startBtn.addEventListener('click', () => this.startGame());
@@ -44,11 +45,12 @@ class Game {
     this.currentMultiplier = speedSelect
       ? Number(speedSelect.value)
       : CONFIG.INITIAL_SPEED_MULTIPLIER;
-    const calculatedInterval = CONFIG.BASE_INTERVAL * this.currentMultiplier;
-
+    this.currentIntervalMs =
+      (CONFIG.BASE_INTERVAL * this.currentMultiplier) / 2;
     this.score = 0;
     this.isGameActive = true;
-
+    this.tick = 0;
+    this.nextSpeedUpScore = 2000;
     if (this.gameInterval) clearInterval(this.gameInterval);
 
     this.player = new Player();
@@ -56,21 +58,26 @@ class Game {
     this.lasers = [];
 
     this.updateScreen();
-    this.gameInterval = setInterval(() => this.gameLoop(), calculatedInterval);
+    this.gameInterval = setInterval(
+      () => this.gameLoop(),
+      this.currentIntervalMs,
+    );
   }
 
   gameLoop() {
     if (!this.isGameActive) return;
-
-    const oldAlienPositions = new Map(
-      this.aliens.filter((a) => a.isAlive).map((a) => [a, a.y]),
-    );
-
-    this.aliens.forEach((alien) => {
-      if (alien.isAlive) {
-        alien.moveDown();
-      }
-    });
+    this.tick++;
+    const shouldAliensMove = this.tick % 3 === 0;
+    const oldAlienPositions = shouldAliensMove
+      ? new Map(this.aliens.filter((a) => a.isAlive).map((a) => [a, a.y]))
+      : new Map();
+    if (shouldAliensMove) {
+      this.aliens.forEach((alien) => {
+        if (alien.isAlive) {
+          alien.moveDown();
+        }
+      });
+    }
 
     this.lasers.forEach((laser) => {
       if (laser.isAlive) laser.moveUp();
@@ -82,7 +89,7 @@ class Game {
       this.aliens.forEach((alien) => {
         if (!alien.isAlive) return;
 
-        const oldY = oldAlienPositions.get(alien);
+        const oldY = shouldAliensMove ? oldAlienPositions.get(alien) : alien.y;
         const directHit = laser.x === alien.x && laser.y === alien.y;
         const passedEachOther =
           laser.x === alien.x && oldY === laser.y && alien.y === laser.y + 1;
@@ -94,9 +101,9 @@ class Game {
         }
       });
     });
-
     this.lasers = this.lasers.filter((laser) => laser.isAlive && laser.y >= 0);
     this.checkGameStatus();
+    this.checkSpeedUp();
     this.updateScreen();
   }
 
@@ -112,21 +119,40 @@ class Game {
 
     const allDead = this.aliens.every((alien) => !alien.isAlive);
     if (allDead && this.aliens.length > 0) {
-      this.endGame(true);
+      this.aliens = this.generateAliens();
+    }
+  }
+  checkSpeedUp() {
+    // Якщо рахунок доріс до нашої планки (5000, 10000 тощо)
+    if (this.score >= this.nextSpeedUpScore) {
+      this.nextSpeedUpScore += 2000; // Збільшуємо планку на майбутнє
+
+      // Прискорюємо гру на 15%, але не дозволяємо таймеру стати меншим за 20мс
+      this.currentIntervalMs = Math.max(20, this.currentIntervalMs * 0.85);
+
+      // Перезапускаємо таймер з новою швидкістю
+      clearInterval(this.gameInterval);
+      this.gameInterval = setInterval(
+        () => this.gameLoop(),
+        this.currentIntervalMs,
+      );
+
+      console.log(
+        `🚀 ШВИДКІСТЬ ЗБІЛЬШЕНО! Новий інтервал: ${this.currentIntervalMs.toFixed(2)}мс`,
+      );
     }
   }
 
-  endGame(isWin) {
+  endGame() {
     this.isGameActive = false;
     if (this.gameInterval) clearInterval(this.gameInterval);
 
     setTimeout(() => {
-      if (isWin) {
-        alert(`🏆 ПЕРЕМОГА! Всесвіт у безпеці! Рахунок: ${this.score}`);
-      } else {
-        alert(`💥 GAME OVER! Прибульці захопили базу. Рахунок: ${this.score}`);
-      }
-    }, 50);
+      alert(`💥 GAME OVER! Прибульці захопили базу. Рахунок: ${this.score}`);
+      this.aliens = [];
+      this.lasers = [];
+      this.updateScreen();
+    }, 50); // ◄ Твоє число 50 залишається на місці!
   }
 
   handleInput(event) {
@@ -151,7 +177,6 @@ class Game {
         this.updateScreen();
         break;
     }
-
   }
 
   updateScreen() {
@@ -165,4 +190,4 @@ class Game {
   }
 }
 
-const game = new Game();
+new Game();
