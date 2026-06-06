@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAME</title>
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+<div class="game-container">
+    <div id="game-board" class="game-board"></div>
+
+    <aside class="sidebar">
+        <div class="score-board">Score: <span id="score-value">0</span></div>
+        <div class="speed-board">Speed: <span id="speed-value">05</span></div>
+
+        <div class="controls">
+            <label for="speed-select">Speed</label>
+            <select id="speed-select">
+                <option value="5">05</option>
+                <option value="10">10</option>
+            </select>
+            <button id="start-btn">Start</button>
+        </div>
+    </aside>
+</div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
