@@ -18,10 +18,8 @@ class Game {
     if (this.startBtn) {
       this.startBtn.addEventListener('click', () => this.startGame());
     }
-
     window.addEventListener('keydown', (event) => this.handleInput(event));
   }
-
   generateAliens() {
     const aliensList = [];
     for (let row = 0; row < 4; row++) {
@@ -41,12 +39,11 @@ class Game {
     if (this.startBtn) {
       this.startBtn.blur();
     }
-    const speedSelect = document.getElementById('speedSelect');
-    this.currentMultiplier = speedSelect
+    const speedSelect = document.getElementById('speed-select');
+    this.currentIntervalMs = speedSelect
       ? Number(speedSelect.value)
       : CONFIG.INITIAL_SPEED_MULTIPLIER;
-    this.currentIntervalMs =
-      (CONFIG.BASE_INTERVAL * this.currentMultiplier) / 2;
+    this.currentMultiplier = speedSelect ? speedSelect.options[speedSelect.selectedIndex].text : "05";
     this.score = 0;
     this.isGameActive = true;
     this.tick = 0;
