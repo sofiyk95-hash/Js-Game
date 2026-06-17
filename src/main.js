@@ -43,17 +43,17 @@ class Game {
     this.currentIntervalMs = speedSelect
       ? Number(speedSelect.value)
       : CONFIG.INITIAL_SPEED_MULTIPLIER;
-    this.currentMultiplier = speedSelect ? speedSelect.options[speedSelect.selectedIndex].text : "05";
+    this.currentMultiplier = speedSelect
+      ? speedSelect.options[speedSelect.selectedIndex].text
+      : '05';
     this.score = 0;
     this.isGameActive = true;
     this.tick = 0;
     this.nextSpeedUpScore = 2000;
     if (this.gameInterval) clearInterval(this.gameInterval);
-
     this.player = new Player();
     this.aliens = this.generateAliens();
     this.lasers = [];
-
     this.updateScreen();
     this.gameInterval = setInterval(
       () => this.gameLoop(),
@@ -65,9 +65,6 @@ class Game {
     if (!this.isGameActive) return;
     this.tick++;
     const shouldAliensMove = this.tick % 3 === 0;
-    const oldAlienPositions = shouldAliensMove
-      ? new Map(this.aliens.filter((a) => a.isAlive).map((a) => [a, a.y]))
-      : new Map();
     if (shouldAliensMove) {
       this.aliens.forEach((alien) => {
         if (alien.isAlive) {
@@ -75,22 +72,17 @@ class Game {
         }
       });
     }
-
     this.lasers.forEach((laser) => {
       if (laser.isAlive) laser.moveUp();
     });
 
     this.lasers.forEach((laser) => {
       if (!laser.isAlive) return;
-
       this.aliens.forEach((alien) => {
         if (!alien.isAlive) return;
-
-        const oldY = shouldAliensMove ? oldAlienPositions.get(alien) : alien.y;
         const directHit = laser.x === alien.x && laser.y === alien.y;
         const passedEachOther =
-          laser.x === alien.x && oldY === laser.y && alien.y === laser.y + 1;
-
+          shouldAliensMove && laser.x === alien.x && alien.y === laser.y + 1;
         if (directHit || passedEachOther) {
           alien.isAlive = false;
           laser.isAlive = false;
@@ -120,26 +112,16 @@ class Game {
     }
   }
   checkSpeedUp() {
-    // Якщо рахунок доріс до нашої планки (5000, 10000 тощо)
     if (this.score >= this.nextSpeedUpScore) {
-      this.nextSpeedUpScore += 2000; // Збільшуємо планку на майбутнє
-
-      // Прискорюємо гру на 15%, але не дозволяємо таймеру стати меншим за 20мс
+      this.nextSpeedUpScore += 2000;
       this.currentIntervalMs = Math.max(20, this.currentIntervalMs * 0.85);
-
-      // Перезапускаємо таймер з новою швидкістю
       clearInterval(this.gameInterval);
       this.gameInterval = setInterval(
         () => this.gameLoop(),
         this.currentIntervalMs,
       );
-
-      console.log(
-        `🚀 ШВИДКІСТЬ ЗБІЛЬШЕНО! Новий інтервал: ${this.currentIntervalMs.toFixed(2)}мс`,
-      );
     }
   }
-
   endGame() {
     this.isGameActive = false;
     if (this.gameInterval) clearInterval(this.gameInterval);
@@ -149,12 +131,11 @@ class Game {
       this.aliens = [];
       this.lasers = [];
       this.updateScreen();
-    }, 50); // ◄ Твоє число 50 залишається на місці!
+    }, 50);
   }
 
   handleInput(event) {
     if (!this.isGameActive || !this.player) return;
-
     switch (event.code) {
       case 'ArrowLeft':
       case 'KeyA':
@@ -175,7 +156,6 @@ class Game {
         break;
     }
   }
-
   updateScreen() {
     this.view.render(
       this.player,

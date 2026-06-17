@@ -26,7 +26,6 @@ export class Player extends GameEntity {
       this.x++;
     }
   }
-
 }
 export class Alien extends GameEntity {
   constructor(x, y, color) {
@@ -40,12 +39,9 @@ export class Alien extends GameEntity {
 }
 export class Laser extends GameEntity {
   constructor(x, y) {
-    // Лазер з'являється там, де стоїть гравець, і має, наприклад, червоний колір
     super(x, y, 'red');
     this.isAlive = true;
   }
-
-  // Лазер летить вгору, тому ми зменшуємо координату Y
   moveUp() {
     this.y--;
   }
