@@ -1,5 +1,5 @@
 *, *::before, *::after {
-    box-sizing: border-box; /* Размеры элементов считаются честно, включая рамки */
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
@@ -18,11 +18,11 @@ body {
 
 }
 .game-board {
-    position: relative; /* Чтобы кораблики внутри позиционировались абсолютно */
-    width: 320px;       /* 8 клеток * 40px */
-    height: 440px;      /* 11 клеток * 40px */
+    position: relative;
+    width: 320px;
+    height: 440px;
     border: 3px solid #000000;
-    overflow: hidden;   /* Чтобы лучи или лазеры не вылезали за границы поля */
+    overflow: hidden;
     background-size: 40px 40px;
     background-image:
             linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
@@ -33,11 +33,15 @@ body {
     border-radius: 4px;
 }
 
-/* Стили для пришельцев (для теста логики) */
+
 .alien-unit {
     position: absolute;
-    /*border-radius: 50%; !* Сделаем их круглыми для отличия *!*/
+    box-sizing: border-box;
     border: 1px solid #000000;
+    width: 41px !important;
+    height: 41px !important;
+    margin-top: -1px;
+    margin-left: -1px
 }
 .laser-unit {
     border-radius: 4px;

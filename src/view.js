@@ -15,7 +15,8 @@ export class GameView {
     div.style.width = `${entity.width}px`;
     div.style.height = `${entity.height}px`;
     div.style.backgroundColor = entity.color;
-    div.style.left = `${entity.x * CONFIG.CELL_SIZE}px`;
+    const xOffset = (CONFIG.CELL_SIZE - entity.width) / 2;
+    div.style.left = `${entity.x * CONFIG.CELL_SIZE + xOffset}px`;
     div.style.top = `${entity.y * CONFIG.CELL_SIZE}px`;
     this.board.appendChild(div);
   }

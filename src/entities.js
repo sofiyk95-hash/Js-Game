@@ -30,6 +30,8 @@ export class Player extends GameEntity {
 export class Alien extends GameEntity {
   constructor(x, y, color) {
     super(x, y, color);
+    this.width = CONFIG.ALIEN_VISUAL_SIZE;
+    this.height = CONFIG.ALIEN_VISUAL_SIZE;
     this.isAlive = true;
   }
 
@@ -40,6 +42,8 @@ export class Alien extends GameEntity {
 export class Laser extends GameEntity {
   constructor(x, y) {
     super(x, y, 'red');
+    this.width = CONFIG.LASER_WIDTH;
+    this.height = CONFIG.LASER_HEIGHT
     this.isAlive = true;
   }
   moveUp() {
