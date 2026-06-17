@@ -39,6 +39,10 @@ class Game {
     if (this.startBtn) {
       this.startBtn.blur();
     }
+    const gameOverScreen = document.getElementById('game-over-screen');
+    if (gameOverScreen) {
+      gameOverScreen.style.display = 'none';
+    }
     const speedSelect = document.getElementById('speed-select');
     this.currentIntervalMs = speedSelect
       ? Number(speedSelect.value)
@@ -125,13 +129,14 @@ class Game {
   endGame() {
     this.isGameActive = false;
     if (this.gameInterval) clearInterval(this.gameInterval);
-
-    setTimeout(() => {
-      alert(`💥 GAME OVER! Прибульці захопили базу. Рахунок: ${this.score}`);
-      this.aliens = [];
-      this.lasers = [];
-      this.updateScreen();
-    }, 50);
+    const finalScoreElement = document.getElementById('final-score');
+    if (finalScoreElement) {
+      finalScoreElement.textContent = this.score;
+    }
+    const gameOverScreen = document.getElementById('game-over-screen');
+    if (gameOverScreen) {
+      gameOverScreen.style.display = 'flex';
+    }
   }
 
   handleInput(event) {

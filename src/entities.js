@@ -43,7 +43,7 @@ export class Laser extends GameEntity {
   constructor(x, y) {
     super(x, y, 'red');
     this.width = CONFIG.LASER_WIDTH;
-    this.height = CONFIG.LASER_HEIGHT
+    this.height = CONFIG.LASER_HEIGHT;
     this.isAlive = true;
   }
   moveUp() {
