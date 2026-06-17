@@ -87,7 +87,11 @@ class Game {
         const directHit = laser.x === alien.x && laser.y === alien.y;
         const passedEachOther =
           shouldAliensMove && laser.x === alien.x && alien.y === laser.y + 1;
-        if (directHit || passedEachOther) {
+        const hitAtSpawnLine =
+          laser.x === alien.x &&
+          laser.y === alien.y - 1 &&
+          alien.y === CONFIG.GRID_HEIGHT - 2;
+        if (directHit || passedEachOther || hitAtSpawnLine) {
           alien.isAlive = false;
           laser.isAlive = false;
           this.score += CONFIG.POINTS_PER_ALIEN;
